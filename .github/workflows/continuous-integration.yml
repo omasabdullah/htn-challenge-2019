@@ -2,6 +2,7 @@ name: Tests
 
 on:
   pull_request:
+    branches: [ master ]
 
 jobs:
   ruby_test:
@@ -28,6 +29,12 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+  javascript_test:
+    steps:
+    - uses: actions/checkout@v2
+    - name: NPM Install
+      run: |
+        npm install
 
 # language: python
 
