@@ -14,10 +14,10 @@ jobs:
     - run: |
         git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
     - name: Check if solution exists
-      run: |
-        files=$(git diff origin/master HEAD --name-only)
+      env:
+        FILES_CHANGED: $(git diff origin/master HEAD --name-only)
     - run: |
-        echo Files are $files
+        echo Files are $FILES_CHANGED
     - name: Setup Ruby
       uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
       with:
