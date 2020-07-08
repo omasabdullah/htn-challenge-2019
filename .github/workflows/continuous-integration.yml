@@ -13,7 +13,7 @@ jobs:
       uses: actions/checkout@v2
     - name: Check if solution exists
       run: |
-        echo $(git diff ${{ github.head_ref }} ${{ github.base_ref }} --name-only)
+        echo $(git diff ${{ github.sha }} master --name-only)
         echo Yes
     - name: Setup Ruby
       uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
@@ -70,7 +70,3 @@ jobs:
         else
           exit 0
         fi
-
-
-        c6dcf743428aa149720628f0ea97e9956b9cbd66
-        e1ed280e4c262dd3d24a57a9ee61cd8eedf5af7c
