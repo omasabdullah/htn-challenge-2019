@@ -11,9 +11,9 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      run: |
+        git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
     - name: Check if solution exists
-    - run: |
-      git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
     - run: |
         git diff origin/master HEAD --name-only
         echo Yes
