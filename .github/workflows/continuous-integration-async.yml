@@ -1,0 +1,75 @@
+name: Asynchronous Tests
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  ruby_tests:
+    name: Testing Ruby Code
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - run: |
+        git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
+      env:
+        FILES_CHANGED: $(git diff origin/master HEAD --name-only)
+    - name: Check if solution exists
+      run: |
+        echo Files are $FILES_CHANGED
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
+      with:
+        ruby-version: 2.6
+    - name: Run tests
+      run: ruby tests/ruby_solution_test.rb
+  python_tests:
+    name: Testing Python Code
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Run tests
+      run: |
+        pytest
+  javascript_tests:
+    name: Testing Javascript Code
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        npm install
+    - name: Run tests
+      run: |
+        npm test
+  test_success:
+    name: Passing submission
+    needs: [ruby_tests, python_tests, javascript_tests]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+    - name: Passing Submission Check
+      env:
+        RPASS: ${{ needs.ruby_tests.result }}
+        JPASS: ${{ needs.javascript_tests.result }}
+        PPASS: ${{ needs.python_tests.result }}
+      run: |
+        echo Ruby tests: $RPASS
+        echo Javascript tests: $JPASS
+        echo Python tests: $PPASS
+        if [[ ($RPASS == "failure" && $PPASS == "failure" && $JPASS == "failure") ]]; then
+          exit 1
+        else
+          exit 0
+        fi
